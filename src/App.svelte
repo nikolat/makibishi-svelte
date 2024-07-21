@@ -4,17 +4,20 @@
   import { insertEventIntoAscendingList } from 'nostr-tools/utils';
   import * as nip19 from 'nostr-tools/nip19';
   import { getGeneralEvents, sendReaction } from './lib/utils';
-  import { defaultRelays, getRoboHashURL, profileRelays, urlToLinkEvent } from './lib/config';
+  import { defaultReaction, defaultRelays, getRoboHashURL, profileRelays, urlToLinkEvent } from './lib/config';
   import { onMount } from 'svelte';
 
   let pool: SimplePool;
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
+  let relays: string[];
+  let reactionContent: string;
+  let enableAnonymousReaction: boolean;
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
       return;
-    const kind7events = await getGeneralEvents(pool, defaultRelays, [{ kinds: [7], '#r': [url] }], (event: NostrEvent) => {
+    const kind7events = await getGeneralEvents(pool, relays, [{ kinds: [7], '#r': [url] }], (event: NostrEvent) => {
       if (!reactionEvents.some(ev => ev.id === event.id)) {
         reactionEvents = insertEventIntoAscendingList(reactionEvents, event);
       }
@@ -36,11 +39,14 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(pool, defaultRelays, window.location.href, '⭐');
+    await sendReaction(pool, relays, window.location.href, reactionContent, !enableAnonymousReaction);
     await getReactions(window.location.href);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
   onMount(async () => {
+    relays = defaultRelays;
+    reactionContent = defaultReaction;
+    enableAnonymousReaction = false;
     pool = new SimplePool();
     await getReactions(window.location.href);
   });

@@ -7,6 +7,7 @@ export const profileRelays = [
 	'wss://purplepag.es/',
 	'wss://directory.yabu.me/',
 ];
+export const defaultReaction = '⭐';
 export const getRoboHashURL = (pubkey: string) => {
 	return `https://robohash.org/${npubEncode(pubkey)}?set=set4`;
 };

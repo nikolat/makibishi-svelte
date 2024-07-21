@@ -29,7 +29,7 @@ export const getGeneralEvents = (pool: SimplePool, relays: string[], filters: Fi
   });
 };
 
-export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], targetURL: string, content: string, useNip07: boolean = true, emojiurl?: string) => {
+export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], targetURL: string, content: string, allowNip07Only: boolean = true, emojiurl?: string) => {
   const tags: string[][] = [
     ['r', targetURL],
   ];
@@ -43,16 +43,16 @@ export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], ta
     content: content
   };
   let newEvent: NostrEvent;
-  if (useNip07) {
-    if (window.nostr === undefined) {
+  if (window.nostr === undefined) {
+    if (allowNip07Only) {
       console.warn('window.nostr is undefined');
       return;
     }
-    newEvent = await window.nostr.signEvent(baseEvent);
-  }
-  else {
     const sk = generateSecretKey();
     newEvent = finalizeEvent(baseEvent, sk);
+  }
+  else {
+    newEvent = await window.nostr.signEvent(baseEvent);
   }
   const pubs = pool.publish(relaysToWrite, newEvent);
   await Promise.any(pubs);

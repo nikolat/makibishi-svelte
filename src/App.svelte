@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NostrEvent } from 'nostr-tools/pure';
   import { SimplePool } from 'nostr-tools/pool';
-  import { insertEventIntoAscendingList } from 'nostr-tools/utils';
+  import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
   import * as nip19 from 'nostr-tools/nip19';
   import { getGeneralEvents, sendReaction } from './lib/utils';
   import { defaultReaction, defaultRelays, getRoboHashURL, profileRelays, urlToLinkEvent } from './lib/config';
@@ -12,7 +12,7 @@
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let relays: string[];
   let reactionContent: string;
-  let enableAnonymousReaction: boolean;
+  let allowAnonymousReaction: boolean;
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
@@ -39,14 +39,33 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(pool, relays, window.location.href, reactionContent, !enableAnonymousReaction);
+    await sendReaction(pool, relays, window.location.href, reactionContent, !allowAnonymousReaction);
     await getReactions(window.location.href);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
   onMount(async () => {
-    relays = defaultRelays;
-    reactionContent = defaultReaction;
-    enableAnonymousReaction = false;
+    const makibishi = document.getElementById('makibishi');
+    if (makibishi === null) {
+      console.warn('makibishi is not found');
+      return;
+    }
+    const makibishiRelays = makibishi.dataset.relays;
+    const makibishiReaction = makibishi.dataset.content;
+    const makibishiAllowAnonymousReaction = makibishi.dataset.allowAnonymousReaction;
+    if (makibishiRelays === undefined) {
+      relays = defaultRelays;
+    }
+    else {
+      relays = Array.from(new Set<string>(makibishiRelays.split(';').filter(r => URL.canParse(r)).map(r => normalizeURL(r))));
+    }
+    reactionContent = makibishiReaction ?? defaultReaction;
+    if (makibishiAllowAnonymousReaction === undefined) {
+      allowAnonymousReaction = false;
+    }
+    else {
+      allowAnonymousReaction = /^true$/i.test(makibishiAllowAnonymousReaction);
+    }
+    console.log('MAKIBISHI Settings:', {relays, reactionContent, allowAnonymousReaction});
     pool = new SimplePool();
     await getReactions(window.location.href);
   });

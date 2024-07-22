@@ -11,7 +11,7 @@
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let relays: string[];
-  let url: string;
+  let targetUrl: string;
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
 
@@ -40,8 +40,8 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(pool, relays, url, reactionContent, !allowAnonymousReaction);
-    await getReactions(url);//本来は不要 wss://relay.mymt.casa/ 用処理
+    await sendReaction(pool, relays, targetUrl, reactionContent, !allowAnonymousReaction);
+    await getReactions(targetUrl);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
   onMount(async () => {
@@ -51,6 +51,7 @@
       return;
     }
     const makibishiRelays = makibishi.dataset.relays;
+    const makibishiUrl = makibishi.dataset.url;
     const makibishiReaction = makibishi.dataset.content;
     const makibishiAllowAnonymousReaction = makibishi.dataset.allowAnonymousReaction;
     if (makibishiRelays === undefined) {
@@ -59,7 +60,12 @@
     else {
       relays = Array.from(new Set<string>(makibishiRelays.split(',').filter(r => URL.canParse(r)).map(r => normalizeURL(r))));
     }
-    url = window.location.href;
+    if (makibishiUrl === undefined) {
+      targetUrl = window.location.href;
+    }
+    else {
+      targetUrl = URL.canParse(makibishiUrl) ? makibishiUrl : window.location.href;
+    }
     reactionContent = makibishiReaction ?? defaultReaction;
     if (makibishiAllowAnonymousReaction === undefined) {
       allowAnonymousReaction = false;
@@ -67,9 +73,9 @@
     else {
       allowAnonymousReaction = /^true$/i.test(makibishiAllowAnonymousReaction);
     }
-    console.log('MAKIBISHI Settings:', {relays, reactionContent, allowAnonymousReaction});
+    console.log('MAKIBISHI Settings:', {relays, targetUrl, reactionContent, allowAnonymousReaction});
     pool = new SimplePool();
-    await getReactions(url);
+    await getReactions(targetUrl);
   });
 </script>
 

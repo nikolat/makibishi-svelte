@@ -56,7 +56,7 @@
       relays = defaultRelays;
     }
     else {
-      relays = Array.from(new Set<string>(makibishiRelays.split(';').filter(r => URL.canParse(r)).map(r => normalizeURL(r))));
+      relays = Array.from(new Set<string>(makibishiRelays.split(',').filter(r => URL.canParse(r)).map(r => normalizeURL(r))));
     }
     reactionContent = makibishiReaction ?? defaultReaction;
     if (makibishiAllowAnonymousReaction === undefined) {

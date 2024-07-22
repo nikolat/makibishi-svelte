@@ -3,6 +3,7 @@ import type { SimplePool } from 'nostr-tools/pool';
 import type { SubCloser } from 'nostr-tools/abstract-pool';
 import type { Filter } from 'nostr-tools/filter';
 import type { WindowNostr } from 'nostr-tools/nip07';
+import { reactionEventKind } from './config';
 
 declare global {
   interface Window {
@@ -37,7 +38,7 @@ export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], ta
     tags.push(['emoji', content.replaceAll(':', ''), emojiurl]);
   }
   const baseEvent: EventTemplate = {
-    kind: 7,
+    kind: reactionEventKind,
     created_at: Math.floor(Date.now() / 1000),
     tags: tags,
     content: content

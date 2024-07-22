@@ -4,26 +4,27 @@
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
   import * as nip19 from 'nostr-tools/nip19';
   import { getGeneralEvents, sendReaction } from './lib/utils';
-  import { defaultReaction, defaultRelays, getRoboHashURL, profileRelays, urlToLinkEvent } from './lib/config';
+  import { defaultReaction, defaultRelays, getRoboHashURL, profileRelays, reactionEventKind, urlToLinkEvent } from './lib/config';
   import { onMount } from 'svelte';
 
   let pool: SimplePool;
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let relays: string[];
+  let url: string;
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
       return;
-    const kind7events = await getGeneralEvents(pool, relays, [{ kinds: [7], '#r': [url] }], (event: NostrEvent) => {
+    const reactionEventsFetched = await getGeneralEvents(pool, relays, [{ kinds: [reactionEventKind], '#r': [url] }], (event: NostrEvent) => {
       if (!reactionEvents.some(ev => ev.id === event.id)) {
         reactionEvents = insertEventIntoAscendingList(reactionEvents, event);
       }
     });
-    const pubkeys: string[] = kind7events.map(ev => ev.pubkey);
-    const kind0events = await getGeneralEvents(pool, profileRelays, [{ kinds: [0], authors: pubkeys }], (event: NostrEvent) => {
+    const pubkeys: string[] = Array.from(new Set<string>(reactionEvents.map(ev => ev.pubkey)));
+    const profileEventsFetched = await getGeneralEvents(pool, profileRelays, [{ kinds: [0], authors: pubkeys }], (event: NostrEvent) => {
       const prof = profiles.get(event.pubkey);
       if (prof === undefined || prof.created_at < event.created_at) {
         try {
@@ -39,8 +40,8 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(pool, relays, window.location.href, reactionContent, !allowAnonymousReaction);
-    await getReactions(window.location.href);//本来は不要 wss://relay.mymt.casa/ 用処理
+    await sendReaction(pool, relays, url, reactionContent, !allowAnonymousReaction);
+    await getReactions(url);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
   onMount(async () => {
@@ -58,6 +59,7 @@
     else {
       relays = Array.from(new Set<string>(makibishiRelays.split(',').filter(r => URL.canParse(r)).map(r => normalizeURL(r))));
     }
+    url = window.location.href;
     reactionContent = makibishiReaction ?? defaultReaction;
     if (makibishiAllowAnonymousReaction === undefined) {
       allowAnonymousReaction = false;
@@ -67,7 +69,7 @@
     }
     console.log('MAKIBISHI Settings:', {relays, reactionContent, allowAnonymousReaction});
     pool = new SimplePool();
-    await getReactions(window.location.href);
+    await getReactions(url);
   });
 </script>
 

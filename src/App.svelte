@@ -2,14 +2,15 @@
   import type { NostrEvent } from 'nostr-tools/pure';
   import { SimplePool } from 'nostr-tools/pool';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
-  import * as nip19 from 'nostr-tools/nip19';
   import { getGeneralEvents, sendReaction } from './lib/utils';
-  import { defaultReaction, defaultRelays, getRoboHashURL, profileRelays, reactionEventKind, urlToLinkEvent } from './lib/config';
+  import { defaultReaction, defaultRelays, expansionThreshold, profileRelays, reactionEventKind } from './lib/config';
   import { onMount } from 'svelte';
+  import Unit from './Unit.svelte';
 
   let pool: SimplePool;
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
+  let isAllowedExpand: boolean;
   let relays: string[];
   let targetUrl: string;
   let reactionContent: string;
@@ -75,8 +76,12 @@
     }
     console.log('MAKIBISHI Settings:', {relays, targetUrl, reactionContent, allowAnonymousReaction});
     pool = new SimplePool();
+    isAllowedExpand = false;
     await getReactions(targetUrl);
   });
+
+  $: reactionFirst = reactionEvents.at(0) as NostrEvent;
+  $: reactionLast = reactionEvents.at(-1) as NostrEvent;
 </script>
 
 <span class="makibishi-container">
@@ -85,67 +90,29 @@
       <path fill-rule="evenodd" d="M3.58169903,14.7981322 L4.42551943,9.87828177 L0.851038858,6.39402435 L5.79084952,5.67622784 L8,1.20000005 L10.2091505,5.67622784 L15.1489611,6.39402435 L11.5744806,9.87828177 L12.418301,14.7981322 L8,12.4752939 L3.58169903,14.7981322 Z M8,10.2157425 L9.76203892,11.1421011 L9.42551943,9.18004197 L10.8510389,7.79050395 L8.88101946,7.50424338 L8,5.71910297 L7.11898054,7.50424338 L5.14896114,7.79050395 L6.57448057,9.18004197 L6.23796108,11.1421011 L8,10.2157425 Z"/>
     </svg>
   </button>
-  {#each reactionEvents as ev}
-    {@const emojiTag = ev.tags.find(tag => tag[0] === 'emoji')}
-    <span class="makibishi-unit">
-    {#if profiles.has(ev.pubkey)}
-      {@const prof = profiles.get(ev.pubkey)}
-      {@const obj = JSON.parse(prof?.content ?? '{}')}
-      {@const npub = nip19.npubEncode(ev.pubkey) }
-      {@const name = obj.name ?? '' }
-      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
-      ><a class="makibishi-link" href="{urlToLinkEvent}/{npub}" target="_blank" rel="noopener noreferrer"
-        ><img class="makibishi-profile-picture" src={obj.picture ?? getRoboHashURL(ev.pubkey)} alt="@{name}" title="@{name}"
-      /></a
-    >{:else}
-      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
-    >{/if
-    }</span>
-  {/each}
+  {#if reactionEvents.length <= expansionThreshold || isAllowedExpand}
+    {#each reactionEvents as ev}<Unit {ev} {profiles} />{/each}
+  {:else}
+    <Unit ev={reactionFirst} {profiles} /><button class="makibishi-expand" on:click={ () => { isAllowedExpand = true; } }>{reactionEvents.length - 2}</button><Unit ev={reactionLast} {profiles} />
+  {/if}
 </span>
 
 <style>
   span.makibishi-container {
     font-size: 12px;
   }
-  span.makibishi-container > span.makibishi-unit a {
-    text-decoration: none;
-  }
-  span.makibishi-container > span.makibishi-unit {
-    position: relative;
-  }
-  span.makibishi-container > span.makibishi-unit > a.makibishi-link {
-    position: absolute;
-    bottom: 16px;
-    left: 0;
-    visibility: hidden;
-  }
-  span.makibishi-container > span.makibishi-unit:hover > a.makibishi-link {
-    visibility: visible;
-  }
-  span.makibishi-container > span.makibishi-unit > span.makibishi-content {
-    display: inline-block;
-    min-width: 16px;
-  }
-  span.makibishi-container > span.makibishi-unit > span.makibishi-content > img {
-    height: 16px;
-    vertical-align: bottom;
-  }
-  span.makibishi-container > span.makibishi-unit > a.makibishi-link > img {
-    width: 16px;
-    height: 16px;
-    border-radius: 10%;
-  }
-  span.makibishi-container > button.makibishi-button {
-    background-color: rgba(127, 127, 127, 0.2);
+  span.makibishi-container > button {
     border: none;
     outline: none;
     padding: 0;
     width: 16px;
     height: 16px;
     cursor: pointer;
+    margin: 0;
+  }
+  span.makibishi-container > button.makibishi-button {
+    background-color: rgba(127, 127, 127, 0.2);
     border-radius: 10%;
-	margin: 0;
   }
   span.makibishi-container > button.makibishi-button > svg {
     width: 16px;
@@ -154,5 +121,8 @@
   }
   span.makibishi-container > button.makibishi-button:active > svg {
     fill: yellow;
+  }
+  span.makibishi-container > button.makibishi-expand {
+    background-color: transparent;
   }
 </style>

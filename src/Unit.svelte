@@ -1,0 +1,55 @@
+<script lang="ts">
+  import type { NostrEvent } from 'nostr-tools/pure';
+  import * as nip19 from 'nostr-tools/nip19';
+  import { getRoboHashURL, urlToLinkEvent } from './lib/config';
+  export let ev: NostrEvent;
+  export let profiles: Map<string, NostrEvent>;
+
+  $: emojiTag = ev.tags.find(tag => tag[0] === 'emoji');
+</script>
+
+<span class="makibishi-unit">
+  {#if profiles.has(ev.pubkey)}
+    {@const prof = profiles.get(ev.pubkey)}
+    {@const obj = JSON.parse(prof?.content ?? '{}')}
+    {@const npub = nip19.npubEncode(ev.pubkey) }
+    {@const name = obj.name ?? '' }
+    <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
+    ><a class="makibishi-link" href="{urlToLinkEvent}/{npub}" target="_blank" rel="noopener noreferrer"
+      ><img class="makibishi-profile-picture" src={obj.picture ?? getRoboHashURL(ev.pubkey)} alt="@{name}" title="@{name}"
+    /></a
+  >{:else}
+    <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
+  >{/if
+}</span>
+
+<style>
+  span.makibishi-unit a {
+    text-decoration: none;
+  }
+  span.makibishi-unit {
+    position: relative;
+  }
+  span.makibishi-unit > a.makibishi-link {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    visibility: hidden;
+  }
+  span.makibishi-unit:hover > a.makibishi-link {
+    visibility: visible;
+  }
+  span.makibishi-unit > span.makibishi-content {
+    display: inline-block;
+    min-width: 16px;
+  }
+  span.makibishi-unit > span.makibishi-content > img {
+    height: 16px;
+    vertical-align: bottom;
+  }
+  span.makibishi-unit > a.makibishi-link > img {
+    width: 16px;
+    height: 16px;
+    border-radius: 10%;
+  }
+</style>

@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export const getGeneralEvents = (pool: SimplePool, relays: string[], filters: Filter[], callbackEvent: Function = () => {}): Promise<NostrEvent[]> => {
+export const getGeneralEvents = (pool: SimplePool, relays: string[], filters: Filter[], callbackEvent: Function = () => {}, autoclose: boolean = true): Promise<NostrEvent[]> => {
   return new Promise((resolve) => {
     const events: NostrEvent[] = [];
     const onevent = (ev: NostrEvent) => {
@@ -19,7 +19,8 @@ export const getGeneralEvents = (pool: SimplePool, relays: string[], filters: Fi
       callbackEvent(ev);
     };
     const oneose = () => {
-      sub.close();
+      if (autoclose)
+        sub.close();
       resolve(events);
     };
     const sub: SubCloser = pool.subscribeMany(

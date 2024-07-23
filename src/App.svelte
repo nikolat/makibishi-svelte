@@ -24,8 +24,10 @@
       if (!reactionEvents.some(ev => ev.id === event.id)) {
         reactionEvents = insertEventIntoAscendingList(reactionEvents, event);
       }
-    });
-    const pubkeys: string[] = Array.from(new Set<string>(reactionEvents.map(ev => ev.pubkey)));
+    }, false);
+  };
+
+  const getProfiles = async (pubkeys: string[]) => {
     const profileEventsFetched = await getGeneralEvents(pool, profileRelays, [{ kinds: [0], authors: pubkeys }], (event: NostrEvent) => {
       const prof = profiles.get(event.pubkey);
       if (prof === undefined || prof.created_at < event.created_at) {
@@ -38,12 +40,11 @@
         profiles.set(event.pubkey, event);
         profiles = profiles;
       }
-    });
-  };
+    }, true);
+  }
 
   const callSendReaction = async () => {
     await sendReaction(pool, relays, targetUrl, reactionContent, !allowAnonymousReaction, anonymousSeckey);
-    await getReactions(targetUrl);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
   onMount(async () => {
@@ -80,6 +81,8 @@
     isAllowedExpand = false;
     anonymousSeckey = generateSecretKey();
     await getReactions(targetUrl);
+    const pubkeys: string[] = Array.from(new Set<string>(reactionEvents.map(ev => ev.pubkey)));
+    await getProfiles(pubkeys);
   });
 
   $: reactionFirst = reactionEvents.at(0) as NostrEvent;

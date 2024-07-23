@@ -98,7 +98,7 @@
   {#if reactionEvents.length <= expansionThreshold || isAllowedExpand}
     {#each reactionEvents as ev}<Unit {ev} {profiles} />{/each}
   {:else}
-    <Unit ev={reactionFirst} {profiles} /><button class="makibishi-expand" on:click={ () => { isAllowedExpand = true; } }>{reactionEvents.length - 2}</button><Unit ev={reactionLast} {profiles} />
+    <Unit ev={reactionFirst} {profiles} /><button class="makibishi-expand" on:click={ () => { isAllowedExpand = true; } }>{reactionEvents.length}</button><Unit ev={reactionLast} {profiles} />
   {/if}
 </span>
 

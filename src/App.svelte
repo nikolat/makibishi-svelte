@@ -88,25 +88,25 @@
   {#each reactionEvents as ev}
     {@const emojiTag = ev.tags.find(tag => tag[0] === 'emoji')}
     <span class="makibishi-unit">
-    {#if profiles.has(ev.pubkey) }
+    {#if profiles.has(ev.pubkey)}
       {@const prof = profiles.get(ev.pubkey)}
       {@const obj = JSON.parse(prof?.content ?? '{}')}
       {@const npub = nip19.npubEncode(ev.pubkey) }
       {@const name = obj.name ?? '' }
-      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span>
-      <a class="makibishi-link" href="{urlToLinkEvent}/{npub}" target="_blank" rel="noopener noreferrer">
-        <img class="makibishi-profile-picture" src={obj.picture ?? getRoboHashURL(ev.pubkey)} alt="@{name}" title="@{name}" />
-      </a>
-    {:else}
-      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span>
-    {/if}
-    </span>
+      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
+      ><a class="makibishi-link" href="{urlToLinkEvent}/{npub}" target="_blank" rel="noopener noreferrer"
+        ><img class="makibishi-profile-picture" src={obj.picture ?? getRoboHashURL(ev.pubkey)} alt="@{name}" title="@{name}"
+      /></a
+    >{:else}
+      <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ ev.content }{/if}</span
+    >{/if
+    }</span>
   {/each}
 </span>
 
 <style>
   span.makibishi-container {
-    font-size: 16px;
+    font-size: 12px;
   }
   span.makibishi-container > span.makibishi-unit a {
     text-decoration: none;
@@ -123,22 +123,29 @@
   span.makibishi-container > span.makibishi-unit:hover > a.makibishi-link {
     visibility: visible;
   }
+  span.makibishi-container > span.makibishi-unit > span.makibishi-content {
+    display: inline-block;
+    min-width: 16px;
+  }
   span.makibishi-container > span.makibishi-unit > span.makibishi-content > img {
     height: 16px;
+    vertical-align: bottom;
   }
   span.makibishi-container > span.makibishi-unit > a.makibishi-link > img {
     width: 16px;
     height: 16px;
+    border-radius: 10%;
   }
   span.makibishi-container > button.makibishi-button {
     background-color: rgba(127, 127, 127, 0.2);
     border: none;
     outline: none;
     padding: 0;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
     border-radius: 10%;
+	margin: 0;
   }
   span.makibishi-container > button.makibishi-button > svg {
     width: 16px;

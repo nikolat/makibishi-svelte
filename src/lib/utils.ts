@@ -1,4 +1,4 @@
-import { finalizeEvent, generateSecretKey, type EventTemplate, type NostrEvent } from 'nostr-tools/pure';
+import { finalizeEvent, type EventTemplate, type NostrEvent } from 'nostr-tools/pure';
 import type { SimplePool } from 'nostr-tools/pool';
 import type { SubCloser } from 'nostr-tools/abstract-pool';
 import type { Filter } from 'nostr-tools/filter';
@@ -30,7 +30,7 @@ export const getGeneralEvents = (pool: SimplePool, relays: string[], filters: Fi
   });
 };
 
-export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], targetURL: string, content: string, allowNip07Only: boolean = true, emojiurl?: string) => {
+export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], targetURL: string, content: string, allowNip07Only: boolean = true, seckey: Uint8Array, emojiurl?: string) => {
   const tags: string[][] = [
     ['r', targetURL],
   ];
@@ -49,8 +49,7 @@ export const sendReaction = async (pool: SimplePool, relaysToWrite: string[], ta
       console.warn('window.nostr is undefined');
       return;
     }
-    const sk = generateSecretKey();
-    newEvent = finalizeEvent(baseEvent, sk);
+    newEvent = finalizeEvent(baseEvent, seckey);
   }
   else {
     newEvent = await window.nostr.signEvent(baseEvent);

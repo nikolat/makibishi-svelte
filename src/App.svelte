@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { NostrEvent } from 'nostr-tools/pure';
+  import { generateSecretKey, type NostrEvent } from 'nostr-tools/pure';
   import { SimplePool } from 'nostr-tools/pool';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
   import { getGeneralEvents, sendReaction } from './lib/utils';
@@ -11,6 +11,7 @@
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let isAllowedExpand: boolean;
+  let anonymousSeckey: Uint8Array;
   let relays: string[];
   let targetUrl: string;
   let reactionContent: string;
@@ -41,7 +42,7 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(pool, relays, targetUrl, reactionContent, !allowAnonymousReaction);
+    await sendReaction(pool, relays, targetUrl, reactionContent, !allowAnonymousReaction, anonymousSeckey);
     await getReactions(targetUrl);//本来は不要 wss://relay.mymt.casa/ 用処理
   };
 
@@ -77,6 +78,7 @@
     console.log('MAKIBISHI Settings:', {relays, targetUrl, reactionContent, allowAnonymousReaction});
     pool = new SimplePool();
     isAllowedExpand = false;
+    anonymousSeckey = generateSecretKey();
     await getReactions(targetUrl);
   });
 

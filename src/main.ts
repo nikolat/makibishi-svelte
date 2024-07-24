@@ -1,7 +1,12 @@
 import App from './App.svelte'
 
-const app = new App({
-  target: document.getElementById('makibishi')!,
-})
-
-export default app
+document.querySelectorAll('.makibishi').forEach(element => {
+  if (!element.hasChildNodes()) {
+    new App({
+      target: element,
+      props: {
+        element: element as HTMLElement,
+      }
+    });
+  }
+});

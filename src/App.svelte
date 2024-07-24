@@ -17,6 +17,8 @@
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
 
+  export let element: HTMLElement;
+
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
       return;
@@ -48,15 +50,10 @@
   };
 
   onMount(async () => {
-    const makibishi = document.getElementById('makibishi');
-    if (makibishi === null) {
-      console.warn('makibishi is not found');
-      return;
-    }
-    const makibishiRelays = makibishi.dataset.relays;
-    const makibishiUrl = makibishi.dataset.url;
-    const makibishiReaction = makibishi.dataset.content;
-    const makibishiAllowAnonymousReaction = makibishi.dataset.allowAnonymousReaction;
+    const makibishiRelays = element.dataset.relays;
+    const makibishiUrl = element.dataset.url;
+    const makibishiReaction = element.dataset.content;
+    const makibishiAllowAnonymousReaction = element.dataset.allowAnonymousReaction;
     if (makibishiRelays === undefined) {
       relays = defaultRelays;
     }

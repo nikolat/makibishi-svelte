@@ -2,10 +2,10 @@
   import { generateSecretKey, type NostrEvent } from 'nostr-tools/pure';
   import { SimplePool } from 'nostr-tools/pool';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
-  import { getGeneralEvents, sendReaction } from './lib/utils';
-  import { defaultReaction, defaultRelays, expansionThreshold, profileRelays, reactionEventKind } from './lib/config';
+  import { getGeneralEvents, sendReaction } from '../utils';
+  import { defaultReaction, defaultRelays, expansionThreshold, profileRelays, reactionEventKind } from '../config';
   import { onMount } from 'svelte';
-  import Unit from './Unit.svelte';
+  import Reaction from './Reaction.svelte'
 
   let pool: SimplePool;
   let reactionEvents: NostrEvent[] = [];
@@ -93,9 +93,9 @@
     </svg>
   </button>
   {#if reactionEvents.length <= expansionThreshold || isAllowedExpand}
-    {#each reactionEvents as ev}<Unit {ev} {profiles} />{/each}
+    {#each reactionEvents as ev}<Reaction {ev} {profiles} />{/each}
   {:else}
-    <Unit ev={reactionFirst} {profiles} /><button class="makibishi-expand" on:click={ () => { isAllowedExpand = true; } }>{reactionEvents.length}</button><Unit ev={reactionLast} {profiles} />
+    <Reaction ev={reactionFirst} {profiles} /><button class="makibishi-expand" on:click={ () => { isAllowedExpand = true; } }>{reactionEvents.length}</button><Reaction ev={reactionLast} {profiles} />
   {/if}
 </span>
 

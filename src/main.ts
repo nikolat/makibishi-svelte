@@ -1,4 +1,4 @@
-import App from './App.svelte'
+import App from './lib/components/App.svelte'
 
 document.querySelectorAll('.makibishi').forEach(element => {
   if (!element.hasChildNodes()) {

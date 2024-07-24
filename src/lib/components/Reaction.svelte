@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NostrEvent } from 'nostr-tools/pure';
   import * as nip19 from 'nostr-tools/nip19';
-  import { getRoboHashURL, urlToLinkEvent } from './lib/config';
+  import { getRoboHashURL, urlToLinkEvent } from '../config';
   export let ev: NostrEvent;
   export let profiles: Map<string, NostrEvent>;
 

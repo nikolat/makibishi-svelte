@@ -67,7 +67,7 @@
       targetUrl = window.location.href;
     }
     else {
-      targetUrl = URL.canParse(makibishiUrl) ? makibishiUrl : window.location.href;
+      targetUrl = URL.canParse(makibishiUrl) ? new URL(makibishiUrl).href : window.location.href;
     }
     reactionContent = makibishiReaction ?? defaultReaction;
     if (makibishiAllowAnonymousReaction === undefined) {

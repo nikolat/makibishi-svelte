@@ -123,7 +123,7 @@
 </script>
 
 <span class="makibishi-container">
-  <button class="makibishi-send" title="add star" on:click="{callSendReaction}">
+  <button class="makibishi-send" title="add a star" on:click="{callSendReaction}">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"

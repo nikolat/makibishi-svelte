@@ -1,6 +1,6 @@
 # MAKIBISHI
 
-Add star to all of websites.
+Add a star to any website.
 
 ## Usage
 
@@ -32,7 +32,7 @@ Place an HTML element with `makibishi` as the `class` attribute value anywhere y
   <dt>data-relays</dt>
   <dd>Relays to be connected</dd>
   <dt>data-url</dt>
-  <dd>URL to reaction</dd>
+  <dd>URL of the website to react to</dd>
   <dt>data-content</dt>
   <dd>Emoji of reaction</dd>
   <dt>data-allow-anonymous-reaction</dt>

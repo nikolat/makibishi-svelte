@@ -1,13 +1,12 @@
 <script lang="ts">
+  import type { SimplePool } from 'nostr-tools/pool';
   import { generateSecretKey, type NostrEvent } from 'nostr-tools/pure';
-  import { SimplePool } from 'nostr-tools/pool';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
   import { getGeneralEvents, sendReaction } from '../utils';
   import { defaultReaction, defaultRelays, expansionThreshold, profileRelays, reactionEventKind } from '../config';
   import { onMount } from 'svelte';
   import Reaction from './Reaction.svelte'
 
-  let pool: SimplePool;
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let isAllowedExpand: boolean;
@@ -18,6 +17,7 @@
   let allowAnonymousReaction: boolean;
 
   export let element: HTMLElement;
+  export let pool: SimplePool;
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
@@ -74,7 +74,6 @@
       allowAnonymousReaction = /^true$/i.test(makibishiAllowAnonymousReaction);
     }
     console.log('MAKIBISHI Settings:', {relays, targetUrl, reactionContent, allowAnonymousReaction});
-    pool = new SimplePool();
     isAllowedExpand = false;
     anonymousSeckey = generateSecretKey();
     await getReactions(targetUrl);

@@ -1,12 +1,33 @@
+import { SimplePool } from 'nostr-tools/pool';
 import App from './lib/components/App.svelte';
 
-document.querySelectorAll('.makibishi').forEach((element) => {
+const pool = new SimplePool();
+
+const initTarget = (element: HTMLElement): void => {
   if (!element.hasChildNodes()) {
     new App({
       target: element,
       props: {
-        element: element as HTMLElement,
+        element,
+        pool,
       },
     });
   }
-});
+};
+
+const initTargets = (selector?: string): void => {
+  document
+    .querySelectorAll<HTMLElement>(selector || '.makibishi')
+    .forEach((element) => {
+      initTarget(element);
+    });
+};
+
+declare global {
+  var makibishi: object;
+}
+
+if (typeof window === 'object') {
+  initTargets();
+  window.makibishi = { initTarget, initTargets };
+}

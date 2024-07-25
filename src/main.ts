@@ -1,7 +1,9 @@
 import { SimplePool } from 'nostr-tools/pool';
+import { generateSecretKey } from 'nostr-tools/pure';
 import App from './lib/components/App.svelte';
 
 const pool = new SimplePool();
+const anonymousSeckey = generateSecretKey();
 
 const initTarget = (element: HTMLElement): void => {
   if (!element.hasChildNodes()) {
@@ -10,6 +12,7 @@ const initTarget = (element: HTMLElement): void => {
       props: {
         element,
         pool,
+        anonymousSeckey,
       },
     });
   }

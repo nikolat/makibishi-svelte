@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SimplePool } from 'nostr-tools/pool';
-  import { generateSecretKey, type NostrEvent } from 'nostr-tools/pure';
+  import type { NostrEvent } from 'nostr-tools/pure';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
   import { getGeneralEvents, sendReaction } from '../utils';
   import { defaultReaction, defaultRelays, expansionThreshold, profileRelays, reactionEventKind } from '../config';
@@ -10,7 +10,6 @@
   let reactionEvents: NostrEvent[] = [];
   let profiles: Map<string, NostrEvent> = new Map<string, NostrEvent>();
   let isAllowedExpand: boolean;
-  let anonymousSeckey: Uint8Array;
   let relays: string[];
   let targetUrl: string;
   let reactionContent: string;
@@ -18,6 +17,7 @@
 
   export let element: HTMLElement;
   export let pool: SimplePool;
+  export let anonymousSeckey: Uint8Array;
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url))
@@ -75,7 +75,6 @@
     }
     console.log('MAKIBISHI Settings:', {relays, targetUrl, reactionContent, allowAnonymousReaction});
     isAllowedExpand = false;
-    anonymousSeckey = generateSecretKey();
     await getReactions(targetUrl);
     const pubkeys: string[] = Array.from(new Set<string>(reactionEvents.map(ev => ev.pubkey)));
     await getProfiles(pubkeys);

@@ -8,23 +8,41 @@
   $: emojiTag = ev.tags.find(tag => tag[0] === 'emoji');
 </script>
 
-<span class="makibishi-reaction"
+<span
+  class="makibishi-reaction"
   data-nevent={nip19.neventEncode({...ev, author: ev.pubkey})}
   data-npub={nip19.npubEncode(ev.pubkey)}
   data-created-at={ev.created_at}
   >{#if profiles.has(ev.pubkey)}
-    {@const prof = profiles.get(ev.pubkey)}
-    {@const obj = JSON.parse(prof?.content ?? '{}')}
-    {@const npub = nip19.npubEncode(ev.pubkey)}
-    {@const name = obj.name ?? ''}
-    <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ev.content}{/if}</span
-    ><a class="makibishi-link" href="{urlToLinkEvent}/{npub}" target="_blank" rel="noopener noreferrer"
-      ><img class="makibishi-profile-picture" src={obj.picture ?? getRoboHashURL(ev.pubkey)} alt="@{name}" title="@{name}"
-    /></a
+  {@const prof = profiles.get(ev.pubkey)}
+  {@const obj = JSON.parse(prof?.content ?? '{}')}
+  {@const npub = nip19.npubEncode(ev.pubkey)}
+  {@const name = obj.name ?? ''}
+  <span class="makibishi-content"
+    >{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img
+      src={emojiTag?.at(2)}
+      alt={ev.content}
+      title={ev.content}
+    />{:else}{ev.content}{/if}</span
+  ><a
+    class="makibishi-link"
+    href="{urlToLinkEvent}/{npub}"
+    target="_blank"
+    rel="noopener noreferrer"
+    ><img
+      class="makibishi-profile-picture"
+      src={obj.picture ?? getRoboHashURL(ev.pubkey)}
+      alt="@{name}"
+      title="@{name}" /></a
   >{:else}
-    <span class="makibishi-content">{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img src={emojiTag?.at(2)} alt={ev.content} title={ev.content} />{:else}{ev.content}{/if}</span
-  >{/if
-}</span>
+  <span class="makibishi-content"
+    >{#if ev.content === `:${emojiTag?.at(1) ?? ''}:`}<img
+      src={emojiTag?.at(2)}
+      alt={ev.content}
+      title={ev.content}
+    />{:else}{ev.content}{/if}</span
+  >{/if}</span
+>
 
 <style>
   span.makibishi-reaction a {

@@ -79,9 +79,7 @@
     const makibishiReaction = element.dataset.content;
     const makibishiAllowAnonymousReaction =
       element.dataset.allowAnonymousReaction;
-    if (makibishiRelays === undefined) {
-      relays = defaultRelays;
-    } else {
+    if (makibishiRelays !== undefined) {
       relays = Array.from(
         new Set<string>(
           makibishiRelays
@@ -90,22 +88,23 @@
             .map((r) => normalizeURL(r)),
         ),
       );
+    } else {
+      relays = defaultRelays;
     }
-    if (makibishiUrl === undefined) {
+    if (makibishiUrl !== undefined && URL.canParse(makibishiUrl)) {
+      targetUrl = new URL(makibishiUrl).href;
+    } else {
       targetUrl = window.location.href;
-    } else {
-      targetUrl = URL.canParse(makibishiUrl)
-        ? new URL(makibishiUrl).href
-        : window.location.href;
     }
-    reactionContent =
-      makibishiReaction !== undefined && inputCount(makibishiReaction) === 1
-        ? makibishiReaction
-        : defaultReaction;
-    if (makibishiAllowAnonymousReaction === undefined) {
-      allowAnonymousReaction = false;
+    if (makibishiReaction !== undefined && inputCount(makibishiReaction) === 1) {
+      reactionContent = makibishiReaction;
     } else {
-      allowAnonymousReaction = /^true$/i.test(makibishiAllowAnonymousReaction);
+      reactionContent = defaultReaction;
+    }
+    if (makibishiAllowAnonymousReaction !== undefined && /^true$/i.test(makibishiAllowAnonymousReaction)) {
+      allowAnonymousReaction = true;
+    } else {
+      allowAnonymousReaction = false;
     }
     console.log('MAKIBISHI Settings:', {
       relays,

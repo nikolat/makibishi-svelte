@@ -96,7 +96,7 @@
     } else {
       targetUrl = window.location.href;
     }
-    if (makibishiReaction !== undefined && inputCount(makibishiReaction) === 1) {
+    if (makibishiReaction !== undefined && inputCount(makibishiReaction) <= 1) {
       reactionContent = makibishiReaction;
     } else {
       reactionContent = defaultReaction;

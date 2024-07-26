@@ -13,7 +13,7 @@
     /^\w+$/.test(emojiTag[1]) &&
     URL.canParse(emojiTag[2]) &&
     ev.content === `:${emojiTag[1]}:`;
-  $: isValidEmoji = isCustomEmoji || inputCount(ev.content) === 1;
+  $: isValidEmoji = isCustomEmoji || inputCount(ev.content) <= 1;
 </script>
 
 {#if isValidEmoji}<span

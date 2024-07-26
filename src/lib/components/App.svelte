@@ -2,7 +2,7 @@
   import type { SimplePool } from 'nostr-tools/pool';
   import type { NostrEvent } from 'nostr-tools/pure';
   import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
-  import { getGeneralEvents, sendReaction } from '../utils';
+  import { getGeneralEvents, inputCount, sendReaction } from '../utils';
   import {
     defaultReaction,
     defaultRelays,
@@ -98,7 +98,10 @@
         ? new URL(makibishiUrl).href
         : window.location.href;
     }
-    reactionContent = makibishiReaction ?? defaultReaction;
+    reactionContent =
+      makibishiReaction !== undefined && inputCount(makibishiReaction) === 1
+        ? makibishiReaction
+        : defaultReaction;
     if (makibishiAllowAnonymousReaction === undefined) {
       allowAnonymousReaction = false;
     } else {

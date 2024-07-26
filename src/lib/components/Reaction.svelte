@@ -2,6 +2,7 @@
   import type { NostrEvent } from 'nostr-tools/pure';
   import * as nip19 from 'nostr-tools/nip19';
   import { getRoboHashURL, urlToLinkEvent } from '../config';
+  import { inputCount } from '../utils';
   export let ev: NostrEvent;
   export let profiles: Map<string, NostrEvent>;
 
@@ -12,9 +13,10 @@
     /^\w+$/.test(emojiTag[1]) &&
     URL.canParse(emojiTag[2]) &&
     ev.content === `:${emojiTag[1]}:`;
+  $: isValidEmoji = isCustomEmoji || (inputCount(ev.content) === 1);
 </script>
 
-<span
+{#if isValidEmoji}<span
   class="makibishi-reaction"
   data-nevent={nip19.neventEncode({...ev, author: ev.pubkey})}
   data-npub={nip19.npubEncode(ev.pubkey)}
@@ -41,7 +43,7 @@
       alt="@{name}"
       title="@{name}" /></a
   >{/if}</span
->
+>{/if}
 
 <style>
   span.makibishi-reaction a {

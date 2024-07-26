@@ -71,3 +71,8 @@ export const sendReaction = async (
   const pubs = pool.publish(relaysToWrite, newEvent);
   await Promise.any(pubs);
 };
+
+export const inputCount = (input: string): number => {
+  const segmeter = new Intl.Segmenter('ja-JP', { granularity: 'word' });
+  return Array.from(segmeter.segment(input)).length;
+};

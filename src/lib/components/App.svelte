@@ -63,7 +63,7 @@
   };
 
   const callSendReaction = async () => {
-    await sendReaction(
+    const event = await sendReaction(
       pool,
       relays,
       targetUrl,
@@ -71,6 +71,9 @@
       !allowAnonymousReaction,
       anonymousSeckey,
     );
+    if (event !== null && window.nostr !== undefined && !profiles.has(event.pubkey)) {
+      await getProfiles([event.pubkey]);
+    }
   };
 
   onMount(async () => {

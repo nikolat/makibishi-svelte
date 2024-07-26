@@ -47,7 +47,7 @@ export const sendReaction = async (
   allowNip07Only: boolean = true,
   seckey: Uint8Array,
   emojiurl?: string,
-) => {
+): Promise<NostrEvent | null> => {
   const tags: string[][] = [['r', targetURL]];
   if (emojiurl) {
     tags.push(['emoji', content.replaceAll(':', ''), emojiurl]);
@@ -62,7 +62,7 @@ export const sendReaction = async (
   if (window.nostr === undefined) {
     if (allowNip07Only) {
       console.warn('window.nostr is undefined');
-      return;
+      return null;
     }
     newEvent = finalizeEvent(baseEvent, seckey);
   } else {
@@ -70,6 +70,7 @@ export const sendReaction = async (
   }
   const pubs = pool.publish(relaysToWrite, newEvent);
   await Promise.any(pubs);
+  return newEvent;
 };
 
 export const inputCount = (input: string): number => {

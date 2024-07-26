@@ -74,6 +74,7 @@ export const sendReaction = async (
 };
 
 export const inputCount = (input: string): number => {
+  // simple check, not perfect
   const segmeter = new Intl.Segmenter('ja-JP', { granularity: 'word' });
   return Array.from(segmeter.segment(input)).length;
 };

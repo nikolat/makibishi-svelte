@@ -1,7 +1,10 @@
 <script lang="ts">
   import type { SimplePool } from 'nostr-tools/pool';
   import type { NostrEvent } from 'nostr-tools/pure';
-  import { insertEventIntoAscendingList, normalizeURL } from 'nostr-tools/utils';
+  import {
+    insertEventIntoAscendingList,
+    normalizeURL,
+  } from 'nostr-tools/utils';
   import { getGeneralEvents, inputCount, sendReaction } from '../utils';
   import {
     defaultReaction,
@@ -71,7 +74,11 @@
       !allowAnonymousReaction,
       anonymousSeckey,
     );
-    if (event !== null && window.nostr !== undefined && !profiles.has(event.pubkey)) {
+    if (
+      event !== null &&
+      window.nostr !== undefined &&
+      !profiles.has(event.pubkey)
+    ) {
       await getProfiles([event.pubkey]);
     }
   };
@@ -104,7 +111,10 @@
     } else {
       reactionContent = defaultReaction;
     }
-    if (makibishiAllowAnonymousReaction !== undefined && /^true$/i.test(makibishiAllowAnonymousReaction)) {
+    if (
+      makibishiAllowAnonymousReaction !== undefined &&
+      /^true$/i.test(makibishiAllowAnonymousReaction)
+    ) {
       allowAnonymousReaction = true;
     } else {
       allowAnonymousReaction = false;
@@ -128,7 +138,7 @@
 </script>
 
 <span class="makibishi-container">
-  <button class="makibishi-send" title="add a star" on:click="{callSendReaction}">
+  <button class="makibishi-send" title="add a star" on:click={callSendReaction}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -144,10 +154,12 @@
   {#if reactionEvents.length <= expansionThreshold || isAllowedExpand}
     {#each reactionEvents as ev}<Reaction {ev} {profiles} />{/each}
   {:else}
-  <Reaction ev="{reactionFirst}" {profiles} /><button
-    class="makibishi-expand"
-    on:click={ ()=> { isAllowedExpand = true; } }>{reactionEvents.length}</button
-  ><Reaction ev="{reactionLast}" {profiles} />
+    <Reaction ev={reactionFirst} {profiles} /><button
+      class="makibishi-expand"
+      on:click={() => {
+        isAllowedExpand = true;
+      }}>{reactionEvents.length}</button
+    ><Reaction ev={reactionLast} {profiles} />
   {/if}
 </span>
 

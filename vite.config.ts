@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: `makibishi.js`,
+        entryFileNames: 'makibishi.js',
       },
     },
   },

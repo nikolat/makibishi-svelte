@@ -5,7 +5,12 @@
     insertEventIntoAscendingList,
     normalizeURL,
   } from 'nostr-tools/utils';
-  import { getGeneralEvents, inputCount, sendReaction } from '../utils';
+  import {
+    getGeneralEvents,
+    inputCount,
+    isValidEmoji,
+    sendReaction,
+  } from '../utils';
   import {
     defaultReaction,
     defaultRelays,
@@ -128,13 +133,14 @@
     isAllowedExpand = false;
     await getReactions(targetUrl);
     const pubkeys: string[] = Array.from(
-      new Set<string>(reactionEvents.map((ev) => ev.pubkey)),
+      new Set<string>(reactionValidEvents.map((ev) => ev.pubkey)),
     );
     await getProfiles(pubkeys);
   });
 
-  $: reactionFirst = reactionEvents.at(0)!;
-  $: reactionLast = reactionEvents.at(-1)!;
+  $: reactionValidEvents = reactionEvents.filter((ev) => isValidEmoji(ev));
+  $: reactionFirst = reactionValidEvents.at(0)!;
+  $: reactionLast = reactionValidEvents.at(-1)!;
 </script>
 
 <span class="makibishi-container">
@@ -151,15 +157,24 @@
       />
     </svg>
   </button>
-  {#if reactionEvents.length <= expansionThreshold || isAllowedExpand}
-    {#each reactionEvents as ev}<Reaction {ev} {profiles} />{/each}
+  {#if reactionValidEvents.length <= expansionThreshold || isAllowedExpand}
+    {#each reactionValidEvents as reactionEvent}<Reaction
+        {reactionEvent}
+        profileEvent={profiles.get(reactionEvent.pubkey)}
+      />{/each}
   {:else}
-    <Reaction ev={reactionFirst} {profiles} /><button
+    <Reaction
+      reactionEvent={reactionFirst}
+      profileEvent={profiles.get(reactionFirst.pubkey)}
+    /><button
       class="makibishi-expand"
       on:click={() => {
         isAllowedExpand = true;
-      }}>{reactionEvents.length}</button
-    ><Reaction ev={reactionLast} {profiles} />
+      }}>{reactionValidEvents.length}</button
+    ><Reaction
+      reactionEvent={reactionLast}
+      profileEvent={profiles.get(reactionLast.pubkey)}
+    />
   {/if}
 </span>
 

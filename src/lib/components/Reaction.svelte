@@ -2,49 +2,43 @@
   import type { NostrEvent } from 'nostr-tools/pure';
   import * as nip19 from 'nostr-tools/nip19';
   import { getRoboHashURL, urlToLinkEvent } from '../config';
-  import { inputCount } from '../utils';
-  export let ev: NostrEvent;
-  export let profiles: Map<string, NostrEvent>;
-
-  $: emojiTag = ev.tags.find((tag) => tag[0] === 'emoji');
-  $: isCustomEmoji =
-    emojiTag !== undefined &&
-    emojiTag.length >= 3 &&
-    /^\w+$/.test(emojiTag[1]) &&
-    URL.canParse(emojiTag[2]) &&
-    ev.content === `:${emojiTag[1]}:`;
-  $: isValidEmoji = isCustomEmoji || inputCount(ev.content) <= 1;
+  import { isCustomEmoji } from '../utils';
+  export let reactionEvent: NostrEvent;
+  export let profileEvent: NostrEvent | undefined;
 </script>
 
-{#if isValidEmoji}<span
-    class="makibishi-reaction"
-    data-nevent={nip19.neventEncode({ ...ev, author: ev.pubkey })}
-    data-npub={nip19.npubEncode(ev.pubkey)}
-    data-created-at={ev.created_at}
-    ><span class="makibishi-content"
-      >{#if isCustomEmoji}<img
-          src={emojiTag?.at(2)}
-          alt={ev.content}
-          title={ev.content}
-        />{:else}{ev.content.replace(/^\+$/, '❤').replace(/^-$/, '💔') ||
-          '❤'}{/if}</span
-    >{#if profiles.has(ev.pubkey)}
-      {@const prof = profiles.get(ev.pubkey)}
-      {@const obj = JSON.parse(prof?.content ?? '{}')}
-      {@const npub = nip19.npubEncode(ev.pubkey)}
-      {@const name = obj.name ?? ''}<a
-        class="makibishi-link"
-        href="{urlToLinkEvent}/{npub}"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><img
-          class="makibishi-profile-picture"
-          src={obj.picture ?? getRoboHashURL(ev.pubkey)}
-          alt="@{name}"
-          title="@{name}"
-        /></a
-      >{/if}</span
-  >{/if}
+<span
+  class="makibishi-reaction"
+  data-nevent={nip19.neventEncode({
+    ...reactionEvent,
+    author: reactionEvent.pubkey,
+  })}
+  data-npub={nip19.npubEncode(reactionEvent.pubkey)}
+  data-created-at={reactionEvent.created_at}
+  ><span class="makibishi-content"
+    >{#if isCustomEmoji(reactionEvent)}<img
+        src={reactionEvent.tags.find((tag) => tag[0] === 'emoji')?.at(2)}
+        alt={reactionEvent.content}
+        title={reactionEvent.content}
+      />{:else}{reactionEvent.content
+        .replace(/^\+$/, '❤')
+        .replace(/^-$/, '💔') || '❤'}{/if}</span
+  >{#if profileEvent !== undefined}
+    {@const obj = JSON.parse(profileEvent.content)}
+    {@const npub = nip19.npubEncode(reactionEvent.pubkey)}
+    {@const name = obj.name ?? ''}<a
+      class="makibishi-link"
+      href="{urlToLinkEvent}/{npub}"
+      target="_blank"
+      rel="noopener noreferrer"
+      ><img
+        class="makibishi-profile-picture"
+        src={obj.picture ?? getRoboHashURL(reactionEvent.pubkey)}
+        alt="@{name}"
+        title="@{name}"
+      /></a
+    >{/if}</span
+>
 
 <style>
   span.makibishi-reaction a {

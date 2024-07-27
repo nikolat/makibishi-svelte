@@ -78,3 +78,19 @@ export const inputCount = (input: string): number => {
   const segmeter = new Intl.Segmenter('ja-JP', { granularity: 'word' });
   return Array.from(segmeter.segment(input)).length;
 };
+
+export const isCustomEmoji = (event: NostrEvent): boolean => {
+  const emojiTags = event.tags.filter((tag) => tag[0] === 'emoji');
+  if (emojiTags.length !== 1) return false;
+  const emojiTag = emojiTags[0];
+  return (
+    emojiTag.length >= 3 &&
+    /^\w+$/.test(emojiTag[1]) &&
+    URL.canParse(emojiTag[2]) &&
+    event.content === `:${emojiTag[1]}:`
+  );
+};
+
+export const isValidEmoji = (event: NostrEvent): boolean => {
+  return isCustomEmoji(event) || inputCount(event.content) <= 1;
+};

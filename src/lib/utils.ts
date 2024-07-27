@@ -53,9 +53,9 @@ export const sendReaction = async (
   }
   const baseEvent: EventTemplate = {
     kind: reactionEventKind,
+    tags,
+    content,
     created_at: Math.floor(Date.now() / 1000),
-    tags: tags,
-    content: content,
   };
   let event: NostrEvent;
   if (window.nostr === undefined) {

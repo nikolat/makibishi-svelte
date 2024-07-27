@@ -48,7 +48,7 @@
     );
   };
 
-  const getProfiles = async (pubkeys: string[]) => {
+  const getProfiles = async (pubkeys: string[]): Promise<void> => {
     const profileEventsFetched = await getGeneralEvents(
       pool,
       profileRelays,
@@ -70,7 +70,7 @@
     );
   };
 
-  const callSendReaction = async () => {
+  const callSendReaction = async (): Promise<void> => {
     const event = await sendReaction(
       pool,
       relays,

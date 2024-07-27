@@ -20,7 +20,7 @@ export const getGeneralEvents = (
   relays: string[],
   filters: Filter[],
   callbackEvent: Function = () => {},
-  autoclose: boolean = true,
+  autoClose: boolean = true,
 ): Promise<NostrEvent[]> => {
   return new Promise((resolve) => {
     const events: NostrEvent[] = [];
@@ -29,7 +29,7 @@ export const getGeneralEvents = (
       callbackEvent(ev);
     };
     const oneose = () => {
-      if (autoclose) sub.close();
+      if (autoClose) sub.close();
       resolve(events);
     };
     const sub: SubCloser = pool.subscribeMany(relays, filters, {
@@ -42,14 +42,14 @@ export const getGeneralEvents = (
 export const sendReaction = async (
   pool: SimplePool,
   relaysToWrite: string[],
-  targetURL: string,
+  targetUrl: string,
   content: string,
   seckey?: Uint8Array,
-  emojiurl?: string,
+  emojiUrl?: string,
 ): Promise<NostrEvent | null> => {
-  const tags: string[][] = [['r', targetURL]];
-  if (emojiurl) {
-    tags.push(['emoji', content.replaceAll(':', ''), emojiurl]);
+  const tags: string[][] = [['r', targetUrl]];
+  if (emojiUrl) {
+    tags.push(['emoji', content.replaceAll(':', ''), emojiUrl]);
   }
   const baseEvent: EventTemplate = {
     kind: reactionEventKind,
@@ -57,19 +57,19 @@ export const sendReaction = async (
     tags: tags,
     content: content,
   };
-  let newEvent: NostrEvent;
+  let event: NostrEvent;
   if (window.nostr === undefined) {
     if (seckey === undefined) {
       console.warn('window.nostr is undefined');
       return null;
     }
-    newEvent = finalizeEvent(baseEvent, seckey);
+    event = finalizeEvent(baseEvent, seckey);
   } else {
-    newEvent = await window.nostr.signEvent(baseEvent);
+    event = await window.nostr.signEvent(baseEvent);
   }
-  const pubs = pool.publish(relaysToWrite, newEvent);
+  const pubs = pool.publish(relaysToWrite, event);
   await Promise.any(pubs);
-  return newEvent;
+  return event;
 };
 
 export const inputCount = (input: string): number => {

@@ -1,8 +1,27 @@
 {
   "name": "makibishi-svelte",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "description": "add a star to any website",
+  "keywords": [
+    "nostr"
+  ],
+  "homepage": "https://nikolat.github.io/makibishi-svelte/",
+  "bugs": {
+    "url": "https://github.com/nikolat/makibishi-svelte/issues"
+  },
+  "license": "CC0-1.0",
+  "author": {
+    "name": "Don"
+  },
+  "files": [
+    "dist",
+    "!dist/index.html"
+  ],
+  "browser": "dist/makibishi.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikolat/makibishi-svelte.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,6 +29,9 @@
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json",
     "lint": "prettier --check .",
     "format": "prettier --write ."
+  },
+  "dependencies": {
+    "nostr-tools": "^2.7.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
@@ -23,7 +45,6 @@
     "vite": "^5.3.4",
     "vite-plugin-css-injected-by-js": "^3.5.1"
   },
-  "dependencies": {
-    "nostr-tools": "^2.7.1"
-  }
+  "private": true,
+  "type": "module"
 }

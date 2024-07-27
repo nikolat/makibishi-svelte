@@ -76,8 +76,7 @@
       relays,
       targetUrl,
       reactionContent,
-      !allowAnonymousReaction,
-      anonymousSeckey,
+      allowAnonymousReaction ? anonymousSeckey : undefined,
     );
     if (
       event !== null &&

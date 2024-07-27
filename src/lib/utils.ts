@@ -44,8 +44,7 @@ export const sendReaction = async (
   relaysToWrite: string[],
   targetURL: string,
   content: string,
-  allowNip07Only: boolean = true,
-  seckey: Uint8Array,
+  seckey?: Uint8Array,
   emojiurl?: string,
 ): Promise<NostrEvent | null> => {
   const tags: string[][] = [['r', targetURL]];
@@ -60,7 +59,7 @@ export const sendReaction = async (
   };
   let newEvent: NostrEvent;
   if (window.nostr === undefined) {
-    if (allowNip07Only) {
+    if (seckey === undefined) {
       console.warn('window.nostr is undefined');
       return null;
     }

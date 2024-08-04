@@ -44,7 +44,7 @@
         class="makibishi-delete"
         title="delete the star"
         on:click={async () => {
-          await callSendDeletion();
+          await callSendDeletion(reactionEvent.id);
         }}
       >
         <svg

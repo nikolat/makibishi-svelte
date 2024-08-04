@@ -9,6 +9,7 @@
     getGeneralEvents,
     inputCount,
     isValidEmoji,
+    sendDeletion,
     sendReaction,
   } from '../utils';
   import {
@@ -99,6 +100,11 @@
     }
   };
 
+  const callSendDeletion = async (id: string): Promise<void> => {
+    await sendDeletion(pool, relays, id);
+    reactionEvents = reactionEvents.filter((ev) => ev.id !== id);
+  };
+
   onMount(async () => {
     const makibishiRelays = element.dataset.relays;
     const makibishiUrl = element.dataset.url;
@@ -174,16 +180,14 @@
         {reactionEvent}
         profileEvent={profiles.get(reactionEvent.pubkey)}
         isAuthor={reactionEvent.pubkey === pubkey}
-        {pool}
-        {relays}
+        {callSendDeletion}
       />{/each}
   {:else}
     <Reaction
       reactionEvent={reactionFirst}
       profileEvent={profiles.get(reactionFirst.pubkey)}
       isAuthor={reactionFirst.pubkey === pubkey}
-      {pool}
-      {relays}
+      {callSendDeletion}
     /><button
       class="makibishi-expand"
       on:click={() => {
@@ -193,8 +197,7 @@
       reactionEvent={reactionLast}
       profileEvent={profiles.get(reactionLast.pubkey)}
       isAuthor={reactionLast.pubkey === pubkey}
-      {pool}
-      {relays}
+      {callSendDeletion}
     />
   {/if}
 </span>

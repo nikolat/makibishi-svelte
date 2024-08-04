@@ -7,14 +7,7 @@
   export let reactionEvent: NostrEvent;
   export let profileEvent: NostrEvent | undefined;
   export let isAuthor: boolean;
-  export let pool: SimplePool;
-  export let relays: string[];
-  let isDeleted: boolean = false;
-
-  const callSendDeletion = async (): Promise<void> => {
-    await sendDeletion(pool, relays, reactionEvent.id);
-    isDeleted = true;
-  };
+  export let callSendDeletion: Function;
 </script>
 
 <span
@@ -25,7 +18,6 @@
   })}
   data-npub={nip19.npubEncode(reactionEvent.pubkey)}
   data-created-at={reactionEvent.created_at}
-  hidden={isDeleted}
   ><span class="makibishi-content"
     >{#if isCustomEmoji(reactionEvent)}<img
         src={reactionEvent.tags.find((tag) => tag[0] === 'emoji')?.at(2)}
@@ -51,7 +43,9 @@
     >{#if isAuthor}<button
         class="makibishi-delete"
         title="delete the star"
-        on:click={callSendDeletion}
+        on:click={async () => {
+          await callSendDeletion();
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

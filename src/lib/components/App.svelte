@@ -28,10 +28,22 @@
   let targetUrl: string;
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
+  let pubkey: string | undefined | null;
 
   export let element: HTMLElement;
   export let pool: SimplePool;
   export let anonymousSeckey: Uint8Array;
+
+  const getPubkey = async () => {
+    if (pubkey !== undefined) {
+      return;
+    }
+    pubkey = null;
+    if (window.nostr === undefined) {
+      return;
+    }
+    pubkey = await window.nostr.getPublicKey();
+  };
 
   const getReactions = async (url: string): Promise<void> => {
     if (!URL.canParse(url)) return;
@@ -142,7 +154,8 @@
   $: reactionLast = reactionValidEvents.at(-1)!;
 </script>
 
-<span class="makibishi-container">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<span class="makibishi-container" on:mouseover={getPubkey} on:focus={getPubkey}>
   <button class="makibishi-send" title="add a star" on:click={callSendReaction}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -160,11 +173,17 @@
     {#each reactionValidEvents as reactionEvent}<Reaction
         {reactionEvent}
         profileEvent={profiles.get(reactionEvent.pubkey)}
+        isAuthor={reactionEvent.pubkey === pubkey}
+        {pool}
+        {relays}
       />{/each}
   {:else}
     <Reaction
       reactionEvent={reactionFirst}
       profileEvent={profiles.get(reactionFirst.pubkey)}
+      isAuthor={reactionFirst.pubkey === pubkey}
+      {pool}
+      {relays}
     /><button
       class="makibishi-expand"
       on:click={() => {
@@ -173,6 +192,9 @@
     ><Reaction
       reactionEvent={reactionLast}
       profileEvent={profiles.get(reactionLast.pubkey)}
+      isAuthor={reactionLast.pubkey === pubkey}
+      {pool}
+      {relays}
     />
   {/if}
 </span>

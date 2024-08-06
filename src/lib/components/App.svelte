@@ -162,7 +162,12 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <span class="makibishi-container" on:mouseover={getPubkey} on:focus={getPubkey}>
-  <button class="makibishi-send" title="add a star" on:click={callSendReaction}>
+  <button
+    class="makibishi-send"
+    title="add a star"
+    disabled={window.nostr === undefined && !allowAnonymousReaction}
+    on:click={callSendReaction}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -213,6 +218,9 @@
     height: 16px;
     cursor: pointer;
     margin: 0;
+  }
+  span.makibishi-container > button:disabled {
+    cursor: not-allowed;
   }
   span.makibishi-container > button.makibishi-send {
     background-color: rgba(127, 127, 127, 0.2);

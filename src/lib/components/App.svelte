@@ -29,6 +29,7 @@
   let targetUrl: string;
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
+  let isDisabledReaction: boolean;
   let pubkey: string | undefined | null;
 
   export let element: HTMLElement;
@@ -148,11 +149,14 @@
       allowAnonymousReaction,
     });
     isAllowedExpand = false;
+    isDisabledReaction = true;
     await getReactions(targetUrl);
     const pubkeys: string[] = Array.from(
       new Set<string>(reactionValidEvents.map((ev) => ev.pubkey)),
     );
     await getProfiles(pubkeys);
+    //need to wait long enough to recognize window.nostr
+    isDisabledReaction = window.nostr === undefined && !allowAnonymousReaction;
   });
 
   $: reactionValidEvents = reactionEvents.filter((ev) => isValidEmoji(ev));
@@ -165,7 +169,7 @@
   <button
     class="makibishi-send"
     title="add a star"
-    disabled={window.nostr === undefined && !allowAnonymousReaction}
+    disabled={isDisabledReaction}
     on:click={callSendReaction}
   >
     <svg

@@ -29,6 +29,7 @@
   let targetUrl: string;
   let reactionContent: string;
   let allowAnonymousReaction: boolean;
+  let allowToDeleteReacion: boolean;
   let isDisabledReaction: boolean;
   let pubkey: string | undefined | null;
 
@@ -37,6 +38,9 @@
   export let anonymousSeckey: Uint8Array;
 
   const getPubkey = async () => {
+    if (!allowToDeleteReacion) {
+      return;
+    }
     if (pubkey !== undefined) {
       return;
     }
@@ -112,6 +116,8 @@
     const makibishiReaction = element.dataset.content;
     const makibishiAllowAnonymousReaction =
       element.dataset.allowAnonymousReaction;
+    const makibishiAllowToDeleteReaction =
+      element.dataset.allowToDeleteReaction;
     if (makibishiRelays !== undefined) {
       relays = Array.from(
         new Set<string>(
@@ -142,11 +148,20 @@
     } else {
       allowAnonymousReaction = false;
     }
+    if (
+      makibishiAllowToDeleteReaction !== undefined &&
+      /^true$/i.test(makibishiAllowToDeleteReaction)
+    ) {
+      allowToDeleteReacion = true;
+    } else {
+      allowToDeleteReacion = false;
+    }
     console.log('MAKIBISHI Settings:', {
       relays,
       targetUrl,
       reactionContent,
       allowAnonymousReaction,
+      allowToDeleteReacion,
     });
     isAllowedExpand = false;
     isDisabledReaction = true;

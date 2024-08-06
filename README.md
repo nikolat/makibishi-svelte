@@ -37,6 +37,8 @@ Place an HTML element with `makibishi` as the `class` attribute value anywhere y
   <dd>Emoji of reaction</dd>
   <dt>data-allow-anonymous-reaction</dt>
   <dd>Allow reactions with disposable secret keys in environments without the <a href="https://github.com/nostr-protocol/nips/blob/master/07.md">NIP-07</a> browser extension</dd>
+  <dt>data-allow-to-delete-reaction</dt>
+  <dd>Allow to delete reactions</dd>
 </dl>
 
 ## License

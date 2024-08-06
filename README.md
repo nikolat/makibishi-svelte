@@ -25,6 +25,7 @@ Place an HTML element with `makibishi` as the `class` attribute value anywhere y
   data-url="https://example.com/"
   data-content="🤙"
   data-allow-anonymous-reaction="true"
+  data-allow-to-delete-reaction="true"
 ></span>
 ```
 

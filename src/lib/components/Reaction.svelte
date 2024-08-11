@@ -1,13 +1,12 @@
 <script lang="ts">
   import type { NostrEvent } from 'nostr-tools/pure';
-  import type { SimplePool } from 'nostr-tools/pool';
   import * as nip19 from 'nostr-tools/nip19';
   import { getRoboHashURL, urlToLinkEvent } from '../config';
-  import { isCustomEmoji, sendDeletion } from '../utils';
+  import { isCustomEmoji } from '../utils';
   export let reactionEvent: NostrEvent;
   export let profileEvent: NostrEvent | undefined;
   export let isAuthor: boolean;
-  export let callSendDeletion: Function;
+  export let callSendDeletion: (id: string) => Promise<void>;
 </script>
 
 <span

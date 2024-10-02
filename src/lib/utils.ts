@@ -80,7 +80,10 @@ export const sendDeletion = async (
   const baseEvent: EventTemplate = {
     kind: 5,
     created_at: Math.floor(Date.now() / 1000),
-    tags: [['e', eventId]],
+    tags: [
+      ['e', eventId],
+      ['k', String(reactionEventKind)],
+    ],
     content: '',
   };
   if (window.nostr === undefined) return;

@@ -186,6 +186,7 @@
     title="add a star"
     disabled={isDisabledReaction}
     on:click={callSendReaction}
+    aria-label="add a star"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"

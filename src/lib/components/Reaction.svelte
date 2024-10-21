@@ -45,6 +45,7 @@
         on:click={async () => {
           await callSendDeletion(reactionEvent.id);
         }}
+        aria-label="delete the star"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -87,7 +87,6 @@
             return;
           }
           profiles.set(event.pubkey, event);
-          profiles = profiles;
         }
       },
       true,

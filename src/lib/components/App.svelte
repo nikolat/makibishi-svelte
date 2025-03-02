@@ -186,7 +186,7 @@
 		</svg>
 	</button>
 	{#if reactionValidEvents.length <= expansionThreshold || isAllowedExpand}
-		{#each reactionValidEvents as reactionEvent}<Reaction
+		{#each reactionValidEvents as reactionEvent (reactionEvent.id)}<Reaction
 				{reactionEvent}
 				profileEvent={profiles.get(reactionEvent.pubkey)}
 				isAuthor={reactionEvent.pubkey === pubkey}

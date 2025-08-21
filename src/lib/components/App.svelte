@@ -50,7 +50,10 @@
 		const _reactionEventsFetched = await getGeneralEvents(
 			pool,
 			relays,
-			[{ kinds: [reactionEventKind], '#r': [url] }],
+			[
+				{ kinds: [reactionEventKind], '#r': [url] },
+				{ kinds: [reactionEventKind], '#i': [url], '#k': ['web'] }
+			],
 			(event: NostrEvent) => {
 				if (!reactionEvents.some((ev) => ev.id === event.id)) {
 					reactionEvents = insertEventIntoAscendingList(reactionEvents, event);

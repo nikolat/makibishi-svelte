@@ -15,7 +15,7 @@
 	import Reaction from './Reaction.svelte';
 
 	let reactionEvents: NostrEvent[] = $state([]);
-	let profiles: SvelteMap<string, NostrEvent> = $state(new SvelteMap<string, NostrEvent>());
+	let profiles: SvelteMap<string, NostrEvent> = new SvelteMap<string, NostrEvent>();
 	let isAllowedExpand: boolean = $state(false);
 	let relays: string[] = $state([]);
 	let targetUrl: string = $state('');
